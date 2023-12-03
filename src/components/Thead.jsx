@@ -9,11 +9,11 @@ export default function Thead() {
   ];
   const arr3 = [{ name: '총점' }, { name: '평균' }, { name: '성적' }];
   return (
-    <thead>
+    <thead className='bg-violet-300'>
       <tr>
         {arr.map((el) => {
           return (
-            <th key={el.name} className='border p-1'>
+            <th key={el.name} className='border p-1 min-w-fit font-black'>
               {el.name}
             </th>
           );
