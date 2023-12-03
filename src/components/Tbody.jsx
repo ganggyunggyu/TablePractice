@@ -1,34 +1,23 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-export default function Tbody({
-  isCalc,
-  tbodyInfos,
-  setTbodyInfos,
-  tbodyInfo,
-  seletId,
-  setSeletId,
-  setResult,
-  i,
-}) {
-  const [이수, set이수] = useState('');
-  const [필수, set필수] = useState('');
-  const [과목명, set괴목명] = useState('');
-  const [학점, set학점] = useState(0);
-  const [출석점수, set출석점수] = useState(0);
-  const [과제점수, set과제점수] = useState(0);
+export default function Tbody({ tbodyInfos, setTbodyInfos, tbodyInfo, seletId, setSeletId, i }) {
+  const [이수, set이수] = useState('전공');
+  const [필수, set필수] = useState('필수');
+  const [과목명, set과목명] = useState('');
+  const [학점, set학점] = useState('');
+  const [출석점수, set출석점수] = useState('');
+  const [과제점수, set과제점수] = useState('');
   const [중간고사, set중간고사] = useState(0);
   const [기말고사, set기말고사] = useState(0);
-  const [총점, set총점] = useState('');
-  const [평균, set평균] = useState('');
+  const [총점, set총점] = useState(0);
+  const [평균, set평균] = useState(0);
   const [성적, set성적] = useState('');
-  const [curTbodyInfo, setCurTbodyInfo] = useState({});
-  const [isInputBlock, setIsInputBlock] = useState(false);
 
   const arr1 = [
     { name: '이수', value: 이수, optionValues: ['전공', '교양'], setValue: set이수 },
     { name: '필수', value: 필수, optionValues: ['필수', '선택'], setValue: set필수 },
-    { name: '과목명', value: 과목명, setValue: set괴목명 },
+    { name: '과목명', value: 과목명, setValue: set과목명 },
   ];
   const arr2 = [
     { name: '학점', value: 학점, setValue: set학점 },
@@ -51,9 +40,24 @@ export default function Tbody({
   const inputValue = (e, value, setValue, regex) => {
     const inputValue = e.target.value;
     if (regex && !regex.test(inputValue)) {
+      alert(
+        '다음의 규칙을 지켜주세요 ! \n학점은 0~3까지 입력 가능합니다 \n출석점수 및 과제점수는 0~20까지 입력 가능합니다 \n중간고사 및 기말고사는 0~30까지 입력 가능합니다',
+      );
+      setValue('');
       return;
     }
     setValue(inputValue);
+  };
+  const 과목명중복 = (e, value, setValue) => {
+    const inputValue = e.target.value;
+    setValue(inputValue);
+    for (const tbodyInfo of tbodyInfos)
+      if (inputValue === tbodyInfo.과목명 && inputValue !== '') {
+        console.log('중복');
+        alert('이미 등록 된 과목명입니다');
+        setValue('');
+        return;
+      }
   };
   const get성적 = (총점) => {
     if (총점 >= 95) return 'A+';
@@ -67,106 +71,48 @@ export default function Tbody({
     if (총점 < 60) return 'F';
   };
 
-  const resultCalc = () => {
-    const copyResult = [];
-    let 총학점 = 0;
-    let 총출석점수 = 0;
-    let 총과제점수 = 0;
-    let 총중간고사 = 0;
-    let 총기말고사 = 0;
-    let 총총점 = 0;
-    let cnt = 0;
-    for (const tbodyInfo of tbodyInfos) {
-      if (tbodyInfo.학점 === 1) {
-        continue;
-      } else {
-        총학점 = 총학점 + +tbodyInfo.학점;
-        총출석점수 = 총출석점수 + +tbodyInfo.출석점수;
-        총과제점수 = 총과제점수 + +tbodyInfo.과제점수;
-        총중간고사 = 총중간고사 + +tbodyInfo.중간고사;
-        총기말고사 = 총기말고사 + +tbodyInfo.기말고사;
-        총총점 = 총총점 + +tbodyInfo.총점;
-        cnt = cnt + 1;
-      }
-    }
-    copyResult.push(총학점);
-    copyResult.push(총출석점수);
-    copyResult.push(총과제점수);
-    copyResult.push(총중간고사);
-    copyResult.push(총기말고사);
-    copyResult.push(총총점);
-    copyResult.push(+(총총점 / cnt).toFixed(1));
-    copyResult.push(get성적(+총총점 / cnt));
-
-    return copyResult;
-  };
-
   useEffect(() => {
-    set총점(
-      arr2.reduce((prev, cur) => {
-        return prev + +cur.value;
-      }, -arr2[0].value),
-    );
-    set평균(+총점 / 4);
-    const copyResult = resultCalc();
-
-    setResult(copyResult);
-  }, [isCalc, tbodyInfos]);
-
-  useEffect(() => {
-    const copy = +총점 / 4;
-    set평균(copy);
-    set성적(get성적(총점));
     const copyInfos = [...tbodyInfos];
+    const updateData = {
+      이수: 이수,
+      필수: 필수,
+      과목명: 과목명,
+      학점: +학점,
+      출석점수: +출석점수,
+      과제점수: +과제점수,
+      중간고사: +중간고사,
+      기말고사: +기말고사,
+      총점: +총점,
+      평균: +평균,
+      성적: 성적,
+    };
+    copyInfos[i] = updateData;
     setTbodyInfos(copyInfos);
-  }, [총점]);
+  }, [이수, 필수, 과목명, 학점, 출석점수, 과제점수, 중간고사, 기말고사]);
 
   useEffect(() => {
-    // const copyInfos = [...tbodyInfos];
-    //
-    // if (!copyInfos[tbodyInfo.id]) {
-    //   copyInfos[tbodyInfo.id] = {}; // 객체가 없다면 먼저 생성
-    // }
-    // copyInfos[tbodyInfo.id].이수 = 이수;
-    // copyInfos[tbodyInfo.id].필수 = 필수;
-    // copyInfos[tbodyInfo.id].과목명 = 과목명;
-    // copyInfos[tbodyInfo.id].학점 = +학점;
-    // copyInfos[tbodyInfo.id].출석점수 = +출석점수;
-    // copyInfos[tbodyInfo.id].과제점수 = +과제점수;
-    // copyInfos[tbodyInfo.id].중간고사 = +중간고사;
-    // copyInfos[tbodyInfo.id].기말고사 = +기말고사;
-    // copyInfos[tbodyInfo.id].총점 = +총점;
-
-    // setCurTbodyInfo(tbodyInfo);
-    // setTbodyInfos(copyInfos);
-
-    const copyInfos = [...tbodyInfos];
-    copyInfos[i].이수 = 이수;
-    copyInfos[i].필수 = 필수;
-    copyInfos[i].과목명 = 과목명;
-    copyInfos[i].학점 = +학점;
-    copyInfos[i].출석점수 = +출석점수;
-    copyInfos[i].과제점수 = +과제점수;
-    copyInfos[i].중간고사 = +중간고사;
-    copyInfos[i].기말고사 = +기말고사;
-    copyInfos[i].총점 = +총점;
-
-    setTbodyInfos(copyInfos);
-    resultCalc();
-  }, [이수, 필수, 과목명, 학점, 출석점수, 과제점수, 중간고사, 기말고사, isCalc]);
-
-  useEffect(() => {
-    if (학점 === 1) {
-      setIsInputBlock(true);
-    }
-  }, [학점]);
+    set이수(tbodyInfo.이수);
+    set필수(tbodyInfo.필수);
+    set과목명(tbodyInfo.과목명);
+    set학점(tbodyInfo.학점 !== 0 ? tbodyInfo.학점 : '');
+    set출석점수(tbodyInfo.출석점수 !== 0 ? tbodyInfo.출석점수 : '');
+    set과제점수(tbodyInfo.과제점수 !== 0 ? tbodyInfo.과제점수 : '');
+    set중간고사(tbodyInfo.중간고사 !== 0 ? tbodyInfo.중간고사 : '');
+    set기말고사(tbodyInfo.기말고사 !== 0 ? tbodyInfo.기말고사 : '');
+    set총점(+tbodyInfo.출석점수 + +tbodyInfo.과제점수 + +tbodyInfo.중간고사 + +tbodyInfo.기말고사);
+    set평균((총점 / 4).toFixed(0));
+    set성적(tbodyInfo.총점 !== 0 ? get성적(총점) : '');
+  }, [tbodyInfos]);
 
   return (
     <tbody>
       <tr
-        className={`${seletId === i ? 'bg-violet-300' : 'bg-violet-100'}`}
+        className={`${
+          seletId === i ? 'bg-violet-300' : 'bg-violet-100'
+        } transition-all hover:bg-violet-300`}
         onClick={() => {
           setSeletId(i);
+          console.log(tbodyInfo);
         }}
       >
         {arr1.map((el) => {
@@ -175,8 +121,9 @@ export default function Tbody({
               {el.name === '과목명' ? (
                 <input
                   type='text'
+                  value={el.value}
                   onChange={(e) => {
-                    inputValue(e, el.value, el.setValue);
+                    과목명중복(e, el.value, el.setValue);
                   }}
                 />
               ) : (
@@ -209,7 +156,7 @@ export default function Tbody({
                   className='w-20 text-center bg-violet-100'
                   value={el.value}
                   onChange={(e) => {
-                    inputValue(e, el.value, el.setValue, /^(?:[0-9]|1[0-9]|20)$/);
+                    inputValue(e, el.value, el.setValue, /^(''|[0-3])$/);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Backspace') {
@@ -288,8 +235,12 @@ export default function Tbody({
         {tbodyInfo.학점 !== 1
           ? arr3.map((el) => {
               return (
-                <td key={el.name} className='border p-1 text-center'>
-                  <p>{el.value}</p>
+                <td
+                  key={el.name}
+                  className={`${el.value === 'F' ? 'bg-red-300' : ''} p-1 text-center border`}
+                >
+                  {/* {el.name === '평균' ? '' : <p>{el.value}</p>} */}
+                  {el.value}
                 </td>
               );
             })
@@ -318,11 +269,9 @@ export default function Tbody({
 }
 Tbody.propTypes = {
   i: PropTypes.number.isRequired,
-  isCalc: PropTypes.bool.isRequired,
   tbodyInfo: PropTypes.object.isRequired,
   tbodyInfos: PropTypes.array.isRequired,
   setTbodyInfos: PropTypes.any.isRequired,
   seletId: PropTypes.number.isRequired,
   setSeletId: PropTypes.any.isRequired,
-  setResult: PropTypes.any.isRequired,
 };
