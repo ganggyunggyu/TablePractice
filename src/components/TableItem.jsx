@@ -56,6 +56,9 @@ export default function TableItem({ title }) {
         console.log(tbodyInfo.총점);
       }
     }
+    if (총총점 === '') {
+      총총점 = 0;
+    }
     copyResult.push(총학점);
     copyResult.push(총출석점수);
     copyResult.push(총과제점수);
@@ -63,7 +66,7 @@ export default function TableItem({ title }) {
     copyResult.push(총기말고사);
     copyResult.push(+총총점);
     copyResult.push(+(총총점 / cnt).toFixed(1));
-    copyResult.push(get성적(+총총점 / cnt));
+    copyResult.push(총총점 === 0 ? '' : get성적(+총총점 / cnt));
     console.log(cnt);
     return copyResult;
   };
@@ -170,7 +173,7 @@ export default function TableItem({ title }) {
             {result.map((el, i) => {
               return (
                 <td className='border p-1 text-center' key={i}>
-                  {el}
+                  {isNaN(el) ? '' : el}
                 </td>
               );
             })}
