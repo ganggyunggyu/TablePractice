@@ -1,33 +1,33 @@
 export default function Thead() {
-  const arr = [{ name: '이수' }, { name: '필수' }, { name: '과목명' }];
-  const arr2 = [
+  const FirstSection = [{ name: '이수' }, { name: '필수' }, { name: '과목명' }];
+  const SecondSection = [
     { name: '학점' },
     { name: '출석점수' },
     { name: '과제점수' },
     { name: '중간고사' },
     { name: '기말고사' },
   ];
-  const arr3 = [{ name: '총점' }, { name: '평균' }, { name: '성적' }];
+  const ThirdSection = [{ name: '총점' }, { name: '평균' }, { name: '성적' }];
   return (
     <thead className='bg-violet-300'>
-      <tr>
-        {arr.map((el) => {
+      <tr className=''>
+        {FirstSection.map((el) => {
           return (
-            <th key={el.name} className='border p-1 min-w-fit font-black'>
+            <th key={el.name} className='border'>
+              <p className='min-w-fit'>{el.name}</p>
+            </th>
+          );
+        })}
+        {SecondSection.map((el) => {
+          return (
+            <th key={el.name} className='border'>
               {el.name}
             </th>
           );
         })}
-        {arr2.map((el) => {
+        {ThirdSection.map((el) => {
           return (
-            <th key={el.name} className='border p-1'>
-              {el.name}
-            </th>
-          );
-        })}
-        {arr3.map((el) => {
-          return (
-            <th key={el.name} className='border p-1'>
+            <th key={el.name} className='border'>
               {el.name}
             </th>
           );

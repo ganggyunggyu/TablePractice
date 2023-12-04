@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Thead from './Thead';
 import Tbody from './Tbody';
@@ -6,103 +6,103 @@ export default function TableItem({ title }) {
   const [seletId, setSeletId] = useState(0);
   const [tbodyInfos, setTbodyInfos] = useState([
     {
-      이수: '전공',
-      필수: '필수',
-      과목명: '',
-      학점: '',
-      출석점수: 0,
-      과제점수: 0,
-      중간고사: 0,
-      기말고사: 0,
-      총점: 0,
-      평균: 0,
-      성적: '',
+      complete: '전공',
+      essential: '필수',
+      subject: '',
+      credit: '',
+      attendanceScore: 0,
+      projectScore: 0,
+      midterm: 0,
+      final: 0,
+      totalScore: 0,
+      averageScore: 0,
+      grade: '',
     },
   ]);
   const [result, setResult] = useState([0, 0, 0, 0, 0, 0, 0, '']);
 
-  const get성적 = (총점) => {
-    if (총점 >= 95) return 'A+';
-    if (총점 >= 90) return 'A';
-    if (총점 >= 85) return 'B+';
-    if (총점 >= 80) return 'B0';
-    if (총점 >= 75) return 'C+';
-    if (총점 >= 70) return 'C0+';
-    if (총점 >= 65) return 'D+';
-    if (총점 >= 60) return 'D0';
-    if (총점 < 60) return 'F';
+  const getGrade = (totalScore) => {
+    if (totalScore >= 95) return 'A+';
+    if (totalScore >= 90) return 'A';
+    if (totalScore >= 85) return 'B+';
+    if (totalScore >= 80) return 'B0';
+    if (totalScore >= 75) return 'C+';
+    if (totalScore >= 70) return 'C0+';
+    if (totalScore >= 65) return 'D+';
+    if (totalScore >= 60) return 'D0';
+    if (totalScore < 60) return 'F';
   };
 
   const resultCalc = (tbodyInfos) => {
     const copyResult = [];
-    let 총학점 = 0;
-    let 총출석점수 = 0;
-    let 총과제점수 = 0;
-    let 총중간고사 = 0;
-    let 총기말고사 = 0;
-    let 총총점 = 0;
+    let sumOfCredit = 0;
+    let sumOfAttendanceScore = 0;
+    let sumOfProjectScore = 0;
+    let sumOfMidterm = 0;
+    let sumOfFinal = 0;
+    let sumOfTotalScore = 0;
     let cnt = tbodyInfos.length;
     for (const tbodyInfo of tbodyInfos) {
-      if (tbodyInfo.학점 === 1) {
+      if (tbodyInfo.credit === 1) {
         cnt = cnt - 1;
+
+        tbodyInfo.attendanceScore = 0;
         continue;
       } else {
-        총학점 = 총학점 + +tbodyInfo.학점;
-        총출석점수 = 총출석점수 + +tbodyInfo.출석점수;
-        총과제점수 = 총과제점수 + +tbodyInfo.과제점수;
-        총중간고사 = 총중간고사 + +tbodyInfo.중간고사;
-        총기말고사 = 총기말고사 + +tbodyInfo.기말고사;
-        총총점 = 총총점 + +tbodyInfo.총점;
-        console.log(tbodyInfo.총점);
+        sumOfCredit = sumOfCredit + +tbodyInfo.credit;
+        sumOfAttendanceScore = sumOfAttendanceScore + +tbodyInfo.attendanceScore;
+        sumOfProjectScore = sumOfProjectScore + +tbodyInfo.projectScore;
+        sumOfMidterm = sumOfMidterm + +tbodyInfo.midterm;
+        sumOfFinal = sumOfFinal + +tbodyInfo.final;
+        sumOfTotalScore = sumOfTotalScore + +tbodyInfo.totalScore;
       }
     }
-    if (총총점 === '') {
-      총총점 = 0;
+    if (sumOfTotalScore === '') {
+      sumOfTotalScore = 0;
     }
-    copyResult.push(총학점);
-    copyResult.push(총출석점수);
-    copyResult.push(총과제점수);
-    copyResult.push(총중간고사);
-    copyResult.push(총기말고사);
-    copyResult.push(+총총점);
-    copyResult.push(+(총총점 / cnt).toFixed(1));
-    copyResult.push(총총점 === 0 ? '' : get성적(+총총점 / cnt));
-    console.log(cnt);
+    copyResult.push(sumOfCredit);
+    copyResult.push(sumOfAttendanceScore);
+    copyResult.push(sumOfProjectScore);
+    copyResult.push(sumOfMidterm);
+    copyResult.push(sumOfFinal);
+    copyResult.push(+sumOfTotalScore);
+    copyResult.push(+(sumOfTotalScore / cnt).toFixed(1));
+    copyResult.push(sumOfTotalScore === 0 ? '' : getGrade(+sumOfTotalScore / cnt));
+
     return copyResult;
   };
 
   const 저장 = () => {
     const copyResult = resultCalc(tbodyInfos);
-    console.log(copyResult);
+
     setResult(copyResult);
     const copyTbodyInfos = [...tbodyInfos];
     copyTbodyInfos.sort((a, b) => {
-      if (a.이수 === b.이수) {
-        if (a.필수 === b.필수) {
-          return a.과목명.localeCompare(b.과목명);
+      if (a.complete === b.complete) {
+        if (a.essential === b.essential) {
+          return a.subject.localeCompare(b.subject);
         }
-        return a.필수.localeCompare(b.필수);
+        return a.essential.localeCompare(b.essential);
       }
-      return a.이수.localeCompare(b.이수);
+      return a.complete.localeCompare(b.complete);
     });
-
     setTbodyInfos(copyTbodyInfos);
   };
 
   const 추가 = () => {
     const copyTbodys = [...tbodyInfos];
     const tbody = {
-      이수: '전공',
-      필수: '필수',
-      과목명: '',
-      학점: '',
-      출석점수: 0,
-      과제점수: 0,
-      중간고사: 0,
-      기말고사: 0,
-      총점: 0,
-      평균: 0,
-      성적: '',
+      complete: '전공',
+      essential: '필수',
+      subject: '',
+      credit: '',
+      attendanceScore: 0,
+      projectScore: 0,
+      midterm: 0,
+      final: 0,
+      totalScore: 0,
+      averageScore: 0,
+      grade: '',
     };
     copyTbodys.push(tbody);
     setTbodyInfos(copyTbodys);
@@ -112,35 +112,41 @@ export default function TableItem({ title }) {
     const copyResult = resultCalc(tbodyInfos);
     setResult(copyResult);
     if (tbodyInfos.length > 1) {
+      const copyResult = resultCalc(tbodyInfos);
+      setResult(copyResult);
       setTbodyInfos((prevTbodyInfos) => {
         const copyTbodys = [...prevTbodyInfos];
         copyTbodys.splice(seletId, 1);
         return copyTbodys;
       });
     } else {
-      console.log('삭제실패');
+      alert('하나 이상의 과목이 필요합니다.');
     }
   };
 
+  useEffect(() => {
+    const copyResult = resultCalc(tbodyInfos);
+    setResult(copyResult);
+  }, [tbodyInfos]);
   return (
     <div key={title} className='flex flex-col gap-4'>
       <div className='flex w-full justify-between'>
         <h1 className='text-2xl ml-3 font-bold'>{title}</h1>
         <div className='flex gap-4'>
           <button
-            className='bg-violet-600 text-white w-12 p-2 rounded-md hover:scale-110 transition-all'
+            className='bg-violet-600 text-white w-12 p-2 rounded-md hover:scale-110 transition-all hover:bg-violet-700'
             onClick={추가}
           >
             추가
           </button>
           <button
-            className='bg-violet-600 text-white w-12 p-2 rounded-md hover:scale-110 transition-all'
+            className='bg-violet-600 text-white w-12 p-2 rounded-md hover:scale-110 transition-all hover:bg-violet-700'
             onClick={저장}
           >
             저장
           </button>
           <button
-            className='bg-red-600 text-white w-12 p-2 rounded-md hover:scale-110 transition-all'
+            className='bg-red-600 text-white w-12 p-2 rounded-md hover:scale-110 transition-all hover:bg-red-700'
             onClick={삭제}
           >
             삭제
@@ -156,23 +162,22 @@ export default function TableItem({ title }) {
                 key={i}
                 i={i}
                 tbodyInfos={tbodyInfos}
-                tbodyInfo={tbodyInfo}
                 setTbodyInfos={setTbodyInfos}
+                tbodyInfo={tbodyInfo}
                 seletId={seletId}
                 setSeletId={setSeletId}
-                setResult={setResult}
               />
             )
           );
         })}
         <tbody className='bg-violet-300'>
           <tr className='text-center'>
-            <td colSpan={3} className='border p-1'>
+            <td colSpan={3} className='border'>
               합계
             </td>
             {result.map((el, i) => {
               return (
-                <td className='border p-1 text-center' key={i}>
+                <td className='border text-center' key={i}>
                   {isNaN(el) ? '' : el}
                 </td>
               );
