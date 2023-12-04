@@ -17,3 +17,8 @@ body {
 input {
   outline: none;
 }
+* {
+  margin: 0;
+  padding: 0;
+  border-color: rgba(168, 139, 250, 0.5);
+}
