@@ -68,7 +68,7 @@ export default function TableItem({ title }) {
     copyResult.push(+sumOfTotalScore);
     copyResult.push(+(sumOfTotalScore / cnt).toFixed(1));
     copyResult.push(sumOfTotalScore === 0 ? '' : getGrade(+sumOfTotalScore / cnt));
-
+    console.log(copyResult);
     return copyResult;
   };
 
@@ -178,7 +178,7 @@ export default function TableItem({ title }) {
             {result.map((el, i) => {
               return (
                 <td className='border text-center' key={i}>
-                  {isNaN(el) ? '' : el}
+                  {el.toString().replace('NaN', '')}
                 </td>
               );
             })}
